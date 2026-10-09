@@ -22,6 +22,7 @@ to it, write down what you saw, and move on. That's a real observation about
 your pipeline, not giving up.
 """
 
+import re
 from dataclasses import dataclass
 
 import config
@@ -65,6 +66,7 @@ def fallback_split(
         index = 0
         while start < len(doc.text):
             piece = doc.text[start : start + chunk_size].strip()
+            #strip removes white space
             if piece:
                 chunks.append(
                     Chunk(
@@ -81,23 +83,91 @@ def fallback_split(
 
 
 def split_documents(documents: list[Document]) -> list[Chunk]:
-    """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
+    """Split short posts by paragraph and sentence, keeping each item coherent."""
+    chunks: list[Chunk] = []
 
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
+    for doc in documents:
+        text = doc.text.strip()
+        if not text:
+            continue
 
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
+        # Short campus-life posts are often complete in one or two paragraphs,
+        # so keep the whole document together unless it is clearly too long.
+        if len(text) <= config.CHUNK_SIZE:
+            chunks.append(
+                Chunk(
+                    text=text,
+                    source=doc.source,
+                    index=0,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+            continue
 
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
-    """
-    return fallback_split(documents)
+        # First split on paragraph breaks, which preserves the natural unit of
+        # advice and discussion in these documents.
+        paragraphs = [p.strip() for p in re.split(r"\n\s*\n+", text) if p.strip()]
+        current = ""
+        index = 0
+
+        for paragraph in paragraphs:
+            candidate = paragraph if not current else f"{current}\n\n{paragraph}"
+
+            if len(candidate) <= config.CHUNK_SIZE:
+                current = candidate
+                continue
+
+            if current:
+                chunks.append(
+                    Chunk(
+                        text=current.strip(),
+                        source=doc.source,
+                        index=index,
+                        produced_by="chunker.py::split_documents",
+                    )
+                )
+                index += 1
+                current = paragraph
+                continue
+
+            # A single paragraph can still be too long. Break it on sentences so
+            # we do not lose a useful fact mid-way through a long answer.
+            sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", paragraph) if s.strip()]
+            sentence_buffer = ""
+            for sentence in sentences:
+                next_text = sentence if not sentence_buffer else f"{sentence_buffer} {sentence}"
+                if len(next_text) <= config.CHUNK_SIZE:
+                    sentence_buffer = next_text
+                    continue
+
+                if sentence_buffer:
+                    chunks.append(
+                        Chunk(
+                            text=sentence_buffer.strip(),
+                            source=doc.source,
+                            index=index,
+                            produced_by="chunker.py::split_documents",
+                        )
+                    )
+                    index += 1
+                    sentence_buffer = sentence
+                else:
+                    sentence_buffer = sentence
+
+            if sentence_buffer:
+                current = sentence_buffer
+
+        if current.strip():
+            chunks.append(
+                Chunk(
+                    text=current.strip(),
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+
+    return chunks
 
 
 def describe(chunks: list[Chunk]) -> str:

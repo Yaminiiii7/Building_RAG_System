@@ -29,8 +29,11 @@
 
 ## Chunking Strategy
 
-**Chunk size:**
-**Overlap:**
+**Chunk size:** 100
+
+**Overlap:** 50
+
+I used a smaller chunk size than the starter because the campus life corpus is made of short, stand-alone advice posts. Many files are only a few sentences long, so a large 800-character window would either leave the whole document as one chunk or split a single idea across unrelated text. A 100/50 split keeps each post coherent while still allowing a little overlap between adjacent thoughts.
 
 <!-- What about YOUR documents made you pick these numbers? Short posts and
      long sectioned guides don't want the same chunking, and "800 seemed
@@ -56,26 +59,47 @@
 **Chunk 1** — source: `` — produced by: ``
 
 ```
+     ======================================================================
+Chunk 1  |  source: admin_add_drop_deadline.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+On the add/drop deadline
+
 ```
 
 **Chunk 2** — source: `` — produced by: ``
 
 ```
+======================================================================
+Chunk 2  |  source: course_cs_210_workload.txt#2  |  produced by: chunker.py::split_documents
+======================================================================
+It's front-loaded — the first month is heavier than the rest, partly because you're learning the format.
 ```
 
 **Chunk 3** — source: `` — produced by: ``
 
 ```
+======================================================================
+Chunk 3  |  source: course_phys_130_exams.txt#0  |  produced by: chunker.py::split_documents
+======================================================================
+PHYS 130 Mechanics — assessment
 ```
 
 **Chunk 4** — source: `` — produced by: ``
 
 ```
+======================================================================
+Chunk 4  |  source: dining_verrill_street_grill.txt#1  |  produced by: chunker.py::split_documents
+======================================================================
+I'm a junior and I've done this twice now. Wait times: up to 30 minutes on Friday evenings, otherwise under 10.The thing worth going for is the burger, which is the only late-night hot food on campus. The thing to know is that one register, so the queue is a single line no matter how busy.
 ```
 
 **Chunk 5** — source: `` — produced by: ``
 
 ```
+======================================================================
+Chunk 5  |  source: housing_morrow_house.txt#1  |  produced by: chunker.py::split_documents
+======================================================================
+Just finished a year in this building. Built 1954, partially renovated 2008. Rooms are singles and doubles, hall bathrooms.
 ```
 
 ## Sample Answer
@@ -84,13 +108,21 @@
      visible. Milestone 4. -->
 
 **Question:**
+What are the graduation requirements and which one is most likely to trip students up?
 
 **Answer:**
+  (best distance 0.268, cutoff 0.6)
+
+The graduation requirements are 120 credit hours, a completed major, the general education requirements, and two writing-intensive courses taken in different departments. The requirement that most often trips people up is the writing-intensive requirement. (Source: admin_graduation_requirements.txt)
+
+Sources retrieved: admin_graduation_requirements.txt, admin_study_abroad.txt, course_hist_118.txt, transit_shuttle.txt
+
+1 model calls this session, 358 tokens (301 in, 57 out)
 
 ```
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.6
 
 <!-- The number you set in config.py, and how you got there.
 
@@ -103,7 +135,17 @@
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| Q1 | Yes | 0.510 |
+| Q2 | Yes | 0.150 |
+| Q3 | Yes | 0.216 |
+| Q4 | Yes | 0.268 |
+| OOS 1 | No | 0.787 |
+| OOS 2 | No | 0.863 |
+| OOS 3 | No | 0.780 |
+| OOS 4 | No | 0.824 |
+| OOS 5 | No | 0.831 |
+
+The in-scope questions cluster below 0.6, while the out-of-scope questions all sit above 0.78. I set the cutoff at 0.6 because it sits between the two groups and rejects the unrelated questions without rejecting the answers the corpus actually covers.
 
 ## How I Used AI
 
