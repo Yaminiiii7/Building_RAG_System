@@ -27,6 +27,8 @@
 
      Milestone 5. -->
 
+I chose the campus_life corpus, which contains student advice about housing, dining, registration, course policies, and campus services. This system answers practical questions such as when to withdraw from a class, how the housing lottery works, and what graduation requirements students need to meet. It retrieves the most relevant text chunks from the corpus and uses them to answer questions grounded in the provided documents.
+
 ## Chunking Strategy
 
 **Chunk size:** 100
@@ -159,8 +161,10 @@ The in-scope questions cluster below 0.6, while the out-of-scope questions all s
      Milestone 5. -->
 
 **1.**
+ I asked Claude to suggest a chunking strategy for my campus_life corpus based on my notes about short student posts and long policy documents. It suggested splitting only by paragraph length, but it ignored the fact that many posts were already self-contained and that some longer paragraphs still needed a sentence-level break. I changed the logic to keep short documents whole, split on paragraph boundaries first, and only break long paragraphs into sentences when they exceeded the size limit.
 
 **2.**
+I asked Claude to help me understand how to choose a relevance cutoff for my corpus. It suggested picking a single number without checking the gap between in-scope and out-of-scope distances, so I compared both groups and chose 0.6 because it sat between them. I kept the cutoff there because it rejected unrelated questions while still allowing the actual campus-life answers to pass.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
