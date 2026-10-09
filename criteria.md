@@ -23,8 +23,11 @@ For at least 4 of my 5 test questions, the retrieved chunks include one that
 contains the answer.
 
 **Why this target:**
-<!-- e.g. "One of my questions is about a topic only two documents mention, so
-     I expect that one to be hard." -->
+Most of the questions in this corpus are practical and specific, but one or two
+are harder because the answer is spread across a small number of campus policy
+or advising documents. I set the target at 4 of 5 so the system has to retrieve
+relevant evidence in the normal cases without requiring perfect performance on
+the one topic that is naturally less common in the corpus.
 
 ---
 
@@ -33,8 +36,11 @@ contains the answer.
 Every answer the system produces names at least one source document.
 
 **Why this target:**
-<!-- Why all five and not four? What about your setup makes that achievable —
-     or what would have to go wrong for it not to be? -->
+This corpus is built around short, direct advice posts and policy docs, so the
+answer should be traceable to a specific file rather than a generic summary. I
+picked 5 of 5 because the pipeline is designed to retrieve chunks and then
+ground the response in those source documents, and if a response does not name
+any file, it is not doing the core job the project is meant to do.
 
 ---
 
@@ -50,48 +56,38 @@ in at least 4 of 5 tries.
      just keep five of them, or the "4 of 5" above has nothing to be 4 of. -->
 
 **Why this target:**
-<!-- What did your distances look like when you set the cutoff in Milestone 4?
-     Was there a clean gap, or did the two groups overlap? -->
+The distance values in my cutoff test showed a clean split: the in-scope
+questions stayed below 0.6, while the out-of-scope questions all sat above 0.78.
+That gap made 4 of 5 a realistic and meaningful target because the gate is meant
+to reject clearly unrelated questions without blocking actual campus-life answers.
 
 ---
 
 ## 4. Something about your chunks
 
-<!-- YOU WRITE THIS ONE.
-
-     How would you know if your chunks were the right size? Name something
-     countable or observable.
-
-     Examples of the right shape — don't copy these, they should come from
-     what you actually saw in Milestone 3:
-       - "At least 4 of 5 sampled chunks read as a complete thought, with no
-          sentence cut in half at either end."
-       - "No chunk is shorter than 200 characters, since anything below that
-          in my corpus turned out to be a heading with no content under it." -->
-
-
+At least 4 of 5 sampled chunks read as a complete thought, with no sentence
+cut in half at either end.
 
 **Why this target:**
-
-
+My campus_life corpus is mostly short advice posts and policy notes, so a good
+chunk has to preserve one idea without chopping a sentence in the middle. The
+100/50 split keeps each chunk coherent while still allowing a little overlap
+between adjacent thoughts, and the samples in my README show the same topic
+staying together within a single source document.
 
 ---
 
 ## 5. Your choice
 
-<!-- YOU WRITE THIS ONE TOO.
-
-     Pick something you actually care about getting right. It could be about
-     speed, about refusals, about a particular kind of question your corpus
-     handles badly, about source attribution being correct rather than merely
-     present — anything, as long as it names a number or an observable
-     outcome. -->
-
-
+For at least 4 of my 5 answerable questions, the final answer includes a
+concrete fact that matches the source document rather than a vague summary.
 
 **Why this target:**
-
-
+I care most about groundedness: the system can name a file and still be wrong
+if it paraphrases the wrong idea. In this corpus, the strongest answers are the
+ones that reflect a specific policy, deadline, or recommendation from the
+actual document, so this checks that the answer is based on the source rather
+than just sounding relevant.
 
 ---
 
