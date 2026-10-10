@@ -193,9 +193,9 @@ I asked Claude to help me understand how to choose a relevance cutoff for my cor
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1. Retrieved chunk contains the answer | 4 of 5 |  |  |  |  |
-| 2. Every answer names a source | 5 of 5 |  |  |  |  |
-| 3. Gate stops out-of-corpus questions | 4 of 5 |  |  |  |  |
+| 1. Retrieved chunk contains the answer | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 2. Every answer names a source | 5 of 5 | 5/5 | 5/5 | 5/5 | MET |
+| 3. Gate stops out-of-corpus questions | 4 of 5 | 5/5 | 5/5 | 5/5 | MET |
 | 4. | | | | | |
 | 5. | | | | | |
 
@@ -216,11 +216,11 @@ I asked Claude to help me understand how to choose a relevance cutoff for my cor
 
 | # | Criterion | Verdict | How I decided |
 |---|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
+| 1 | Retrieved chunks contain the answer (target: 4 of 5) | MET | I checked the retrieved chunks for all five answerable questions; each contained the key fact, so the result was 5/5 in every run. |
+| 2 | Every answer names a source (target: 5 of 5) | MET | All 15 generated answers (five questions across three runs) named at least one source document. |
+| 3 | The relevance gate stops out-of-corpus questions (target: 4 of 5) | MET | The gate refused all five out-of-corpus questions; its deterministic 5/5 result applies to each run. |
+| 4 | Sampled chunks read as complete thoughts (target: 4 of 5) | MISSED | Only three of the five displayed sample chunks are complete thoughts; chunks 1 and 3 are headings/fragments, giving 3/5. |
+| 5 | Final answers include a concrete fact matching the source (target: 4 of 5) | MET | Each of the five answers in every run states a concrete policy or fact that matches its cited source, giving 5/5 per run. |
 
 ## Diagnoses
 
@@ -241,6 +241,15 @@ I asked Claude to help me understand how to choose a relevance cutoff for my cor
      low, and which one you'd tighten and to what.
 
      Milestone 3. -->
+
+Criterion 4 was missed at the **chunking** stage. The chunker splits long
+documents at paragraph boundaries and limits chunks to 100 characters. In
+`admin_add_drop_deadline.txt` and `course_phys_130_exams.txt`, it treated each
+opening heading as a separate paragraph; because the heading plus following
+paragraph exceeded the size limit, it emitted the heading alone as a chunk.
+Those two heading-only chunks are not complete thoughts, leaving 3 of the 5
+sampled chunks meeting the target. This is a chunk-boundary issue, not a
+retrieval or generation failure.
 
 ## The Improvement
 
