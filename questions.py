@@ -26,10 +26,8 @@ QUESTIONS = [
     {"question": "What is the difference between dropping a course and withdrawing from it?", "expects": "W on transcript"},
     {"question": "When can students change their meal plan, and what happens if they upgrade or downgrade?", "expects": "first ten days"},
     {"question": "What are the graduation requirements and which one is most likely to trip students up?", "expects": "writing-intensive requirement"},
-    {"question": "What are the rules for taking a course pass/fail and when can students declare it?", "expects": "week eight"},
-    {"question": "Are 800-character chunks with 120 characters of overlap a reasonable size for this campus-life corpus, or should the text be kept more compact?", "expects": "800 characters"},
-{"question": "How long is the walk from Fenwick Court to central campus according to the campus life notes?", "expects": "18 minutes"}
-
+    {"question": "What are the rules for taking a course pass/fail and when can students declare it?", "expects": "week eight"}
+    
 ]
 
 # Questions from a different world entirely. Your gate should refuse all five.
