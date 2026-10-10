@@ -88,7 +88,7 @@ def split_documents(documents: list[Document]) -> list[Chunk]:
 
     for doc in documents:
         text = doc.text.strip()
-        if not text:
+        if not text:# skip empty documents
             continue
 
         # Short campus-life posts are often complete in one or two paragraphs,
